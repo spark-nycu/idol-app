@@ -1,0 +1,5 @@
+regex:(AWS_ACCESS_KEY_ID)[^ ]*==>***REMOVED***
+regex:(AWS_SECRET_ACCESS_KEY)[^ ]*==>***REMOVED***
+regex:(AWS_SESSION_TOKEN)[^ ]*==>***REMOVED***
+regex:(AWS_REGION)[^ ]*==>***REMOVED***
+regex:(VOICE_API_TOKEN)[^ ]*==>***REMOVED***

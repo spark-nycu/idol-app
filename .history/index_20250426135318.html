@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>偶像回應 Demo</title>
+</head>
+<body>
+    <h1>偶像回應 Demo</h1>
+
+    <form id="idolForm" method="post">
+        <label for="message">輸入訊息給偶像：</label><br>
+        <input type="text" id="message" name="message" required style="width: 300px;"><br><br>
+        <button type="submit">送出訊息</button>
+    </form>
+
+    <h2>偶像的回應：</h2>
+    <p id="idolReply">（等待中...）</p>
+
+    <h2>偶像的聲音：</h2>
+    <audio id="idolAudio" controls></audio>
+
+    <h2>偶像的表情圖片：</h2>
+    <img id="idolImage" src="" alt="偶像圖片" width="300"/>
+
+    <script>
+        const form = document.getElementById('idolForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+        
+            const message = document.getElementById('message').value;
+        
+            const response = await fetch('http://localhost:8000/idol-reply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    message: message
+                })
+            });
+        
+            if (response.ok) {
+                const data = await response.json();
+        
+                document.getElementById('idolReply').innerText = data.idol_reply;
+        
+                const audioBlob = base64ToBlob(data.audio_base64, 'audio/wav');
+                const audioUrl = URL.createObjectURL(audioBlob);
+                document.getElementById('idolAudio').src = audioUrl;
+        
+                const imgBlob = base64ToBlob(data.image_base64, 'image/png');
+                const imgUrl = URL.createObjectURL(imgBlob);
+                document.getElementById('idolImage').src = imgUrl;
+            } else {
+                alert('伺服器錯誤，請稍後再試');
+            }
+        });
+        
+        function base64ToBlob(base64, mime) {
+            const binary = atob(base64);
+            const array = [];
+            for (let i = 0; i < binary.length; i++) {
+                array.push(binary.charCodeAt(i));
+            }
+            return new Blob([new Uint8Array(array)], { type: mime });
+        }
+    </script>
+</body>
+</html>

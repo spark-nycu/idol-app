@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>虛擬偶像互動平台</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #ff6b9b;
+      --secondary-color: #7c4dff;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    body {
+      background-color: #f0f2f5;
+      background-image: linear-gradient(135deg, #fff1f8 0%, #e2f0ff 100%);
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    .hero-section {
+      background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
+                  url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+      border-radius: 0 0 2rem 2rem;
+    }
+    
+    .form-card {
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: none;
+      overflow: hidden;
+    }
+    
+    .form-card .card-header {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: bold;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: #ff4b8b;
+      border-color: #ff4b8b;
+    }
+    
+    .response-card {
+      border-radius: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border: none;
+      transition: all 0.3s ease;
+    }
+    
+    .response-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .response-card .card-header {
+      background-color: var(--secondary-color);
+      color: white;
+      font-weight: bold;
+    }
+    
+    .idol-message {
+      background-color: #fff9fb;
+      border-radius: 1rem;
+      padding: 1rem;
+      position: relative;
+    }
+    
+    .idol-message:before {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      border-width: 0 10px 10px 10px;
+      border-style: solid;
+      border-color: transparent transparent #fff9fb transparent;
+    }
+    
+    #idolImage {
+      border-radius: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      max-height: 350px;
+      object-fit: cover;
+    }
+    
+    #loading {
+      display: none;
+    }
+    
+    audio::-webkit-media-controls-panel {
+      background-color: #fcebf3;
+    }
+    
+    .idol-preview {
+      width: 200px;
+      height: 200px;
+      border-radius: 1rem;
+      margin: 0 auto;
+      overflow: hidden;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .idol-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fa-solid fa-microphone-lines me-2"></i>
+        虛擬偶像互動平台
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero-section py-5 mb-5">
+    <div class="container text-center py-4">
+      <h1 class="display-4 fw-bold">與 Chiachi 互動</h1>
+      <p class="lead">發送訊息，Chiachi 會用專屬表情和聲音回應你！</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row g-4">
+      <!-- Form Section -->
+      <div class="col-lg-5">
+        <div class="card form-card mb-4">
+          <div class="card-header">
+            <i class="fa-solid fa-paper-plane me-2"></i>
+            發送訊息給 Chiachi
+          </div>
+          <div class="card-body">
+            <form id="idolForm">
+              <div class="mb-4 text-center">
+                <div class="idol-preview mb-3">
+                  <img src="chiachi.jpg" alt="Chiachi" />
+                </div>
+                <h4 class="text-primary">今天想跟 Chiachi 聊什麼呢？</h4>
+              </div>
+              
+              <div class="mb-4">
+                <label for="message" class="form-label fw-bold">訊息內容：</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light">
+                    <i class="fa-solid fa-comment"></i>
+                  </span>
+                  <input type="text" class="form-control" id="message" placeholder="想對 Chiachi 說什麼呢？" required>
+                </div>
+              </div>
+              
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="fa-solid fa-paper-plane me-2"></i>送出
+                </button>
+              </div>
+            </form>
+            
+            <div id="loading" class="text-center mt-3">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="text-muted">Chiachi 正在回應中...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Response Section -->
+      <div class="col-lg-7">
+        <div class="card response-card mb-4">
+          <div class="card-header">
+            <i class="fa-solid fa-comment-dots me-2"></i>
+            Chiachi 的回應
+          </div>
+          <div class="card-body">
+            <div id="responseSection" style="display: none;">
+              <div class="idol-message mb-4">
+                <p id="idolReply" class="mb-0 fst-italic">（等待 Chiachi 回應...）</p>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label fw-bold">
+                  <i class="fa-solid fa-volume-high me-2"></i>
+                  Chiachi 的聲音：
+                </label>
+                <audio id="idolAudio" controls class="w-100 rounded"></audio>
+              </div>
+              
+              <div>
+                <label class="form-label fw-bold">
+                  <i class="fa-solid fa-photo-film me-2"></i>
+                  Chiachi 的表情：
+                </label>
+                <div class="text-center">
+                  <img id="idolImage" src="" alt="Chiachi 圖片" class="img-fluid mt-2">
+                </div>
+              </div>
+            </div>
+            
+            <div id="initialMessage" class="text-center py-5">
+              <i class="fa-solid fa-heart fa-3x text-danger mb-3"></i>
+              <h3 class="text-muted">發送訊息後，Chiachi 的回應會顯示在這裡</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // 加載圖片為 Base64
+    async function loadImageAsBase64(imagePath) {
+      return new Promise((resolve, reject) => {
+        fetch(imagePath)
+          .then(response => response.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('無法讀取圖片'));
+            reader.readAsDataURL(blob);
+          })
+          .catch(reject);
+      });
+    }
+
+    // 表單提交處理
+    document.getElementById('idolForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      
+      const message = document.getElementById('message').value.trim();
+      if (!message) return alert('請輸入訊息');
+      
+      // 顯示加載中
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('initialMessage').style.display = 'none';
+      document.getElementById('responseSection').style.display = 'none';
+      
+      try {
+        // 從本地圖片加載 base64
+        const fixedImagePath = 'chiachi.jpg';
+        const imageBase64 = await loadImageAsBase64(fixedImagePath);
+        
+        const resp = await fetch('http://localhost:8000/idol-reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            message,
+            imageBase64: imageBase64 
+          })
+        });
+        
+        if (!resp.ok) {
+          const err = await resp.json();
+          throw new Error(err.error || '發生錯誤');
+        }
+        
+        const data = await resp.json();
+        
+        // 顯示回應區塊
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('responseSection').style.display = 'block';
+        
+        // 更新回應內容
+        document.getElementById('idolReply').innerText = data.idol_reply || '謝謝你的訊息！';
+        
+        if (data.audio_base64) {
+          const audioBlob = base64ToBlob(data.audio_base64, 'audio/wav');
+          document.getElementById('idolAudio').src = URL.createObjectURL(audioBlob);
+        }
+        
+        if (data.image_base64) {
+          const imgBlob = base64ToBlob(data.image_base64, 'image/png');
+          document.getElementById('idolImage').src = URL.createObjectURL(imgBlob);
+        } else {
+          // 使用原始固定圖片
+          document.getElementById('idolImage').src = fixedImagePath;
+        }
+        
+      } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        alert('錯誤: ' + error.message);
+      }
+    });
+    
+    function base64ToBlob(base64, mime) {
+      // 處理可能包含Data URL前綴的base64字串
+      let b64Data = base64;
+      if (base64.includes(',')) {
+        b64Data = base64.split(',')[1];
+      }
+      
+      const bstr = atob(b64Data);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      return new Blob([u8arr], { type: mime });
+    }
+  </script>
+</body>
+</html>

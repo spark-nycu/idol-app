@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>偶像回應 & 表情編輯</title>
+</head>
+<body>
+  <h1>偶像回應 & 表情編輯</h1>
+
+  <form id="idolForm">
+    <label>上傳偶像原圖：</label><br>
+    <input type="file" id="imageFile" accept="image/*" required><br><br>
+
+    <label for="message">輸入訊息給偶像：</label><br>
+    <input type="text" id="message" required style="width: 300px;"><br><br>
+
+    <button type="submit">送出</button>
+  </form>
+
+  <h2>偶像的回應：</h2>
+  <p id="idolReply">（等待中...）</p>
+
+  <h2>編輯後的偶像表情：</h2>
+  <img id="idolImage" src="" alt="偶像圖片" width="300">
+
+  <script>
+    document.getElementById('idolForm').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const file = document.getElementById('imageFile').files[0];
+      const message = document.getElementById('message').value.trim();
+      if (!file || !message) return alert('請選擇圖片並輸入訊息');
+
+      // 1. 讀 Base64
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const imageBase64 = reader.result;
+
+        // 2. 呼叫後端
+        const resp = await fetch('http://localhost:8000/idol-reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, imageBase64 })
+        });
+        if (!resp.ok) {
+          const err = await resp.json();
+          return alert('Error: ' + err.error);
+        }
+
+        const data = await resp.json();
+        // 3. 顯示文字
+        document.getElementById('idolReply').innerText = data.idol_reply;
+
+        // 4. 顯示圖片
+        if (data.image_base64) {
+          const blob = base64ToBlob(data.image_base64, 'image/png');
+          document.getElementById('idolImage').src = URL.createObjectURL(blob);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function base64ToBlob(base64, mime) {
+      const bstr = atob(base64);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      return new Blob([u8arr], { type: mime });
+    }
+  </script>
+</body>
+</html>
